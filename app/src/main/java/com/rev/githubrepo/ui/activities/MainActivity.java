@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.rev.githubrepo.R;
 import com.rev.githubrepo.api.model.GitHubRepo;
 import com.rev.githubrepo.api.service.GitHubClient;
+import com.rev.githubrepo.ui.adapter.GitHubRepoAdapter;
 
 import java.util.List;
 
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<GitHubRepo>> call, Response<List<GitHubRepo>> response) {
                 List<GitHubRepo> repos = response.body();
+                listView.setAdapter(new GitHubRepoAdapter(MainActivity.this, repos));
             }
 
             @Override
