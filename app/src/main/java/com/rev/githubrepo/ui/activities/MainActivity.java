@@ -26,7 +26,13 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.repository_list_layout)
     public void onClickRepositoryLayout(){
-        Intent main = new Intent(MainActivity.this, RepositoryListActivity.class);
-        startActivity(main);
+        Intent repo = new Intent(MainActivity.this, RepositoryListActivity.class);
+        startActivity(repo);
+    }
+
+    @OnClick(R.id.send_object_layout)
+    public void onClickSendObject(){
+        Intent post = new Intent(MainActivity.this, PostActivity.class);
+        startActivity(post);
     }
 }

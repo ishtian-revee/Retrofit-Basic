@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rev.githubrepo.ui.activities.PostActivity">
+
+    <TextView
+        android:id="@+id/txt_insert_user_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:text="Insert User Information"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/color_low_bluish"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:fontFamily="sans-serif"
+        android:text="Email"
+        android:textColor="@color/color_pink"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/txt_insert_user_info"
+        app:layout_constraintStart_toStartOf="@+id/txt_insert_user_info"
+        app:layout_constraintTop_toBottomOf="@+id/txt_insert_user_info" />
+
+    <EditText
+        android:id="@+id/et_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/color_blue"
+        android:ems="10"
+        android:hint="Insert email address"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/color_blue"
+        android:textColorHint="@color/color_low_bluish"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@+id/txt_email"
+        app:layout_constraintStart_toStartOf="@+id/txt_email"
+        app:layout_constraintTop_toBottomOf="@+id/txt_email" />
+
+    <TextView
+        android:id="@+id/txt_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:fontFamily="sans-serif"
+        android:text="Password"
+        android:textColor="@color/color_pink"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/et_email"
+        app:layout_constraintStart_toStartOf="@+id/et_email"
+        app:layout_constraintTop_toBottomOf="@+id/et_email" />
+
+    <EditText
+        android:id="@+id/et_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/color_blue"
+        android:ems="10"
+        android:hint="Insert password"
+        android:inputType="textPassword"
+        android:textColor="@color/color_blue"
+        android:textColorHint="@color/color_low_bluish"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@+id/txt_password"
+        app:layout_constraintStart_toStartOf="@+id/txt_password"
+        app:layout_constraintTop_toBottomOf="@+id/txt_password" />
+
+    <Button
+        android:id="@+id/btn_create"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:text="Send"
+        android:textColor="@color/color_white"
+        android:textSize="18sp"
+        android:textAllCaps="false"
+        android:fontFamily="sans-serif"
+        android:background="@drawable/ripple_button_pink"
+        app:layout_constraintEnd_toEndOf="@+id/et_password"
+        app:layout_constraintStart_toStartOf="@+id/et_password"
+        app:layout_constraintTop_toBottomOf="@+id/et_password" />
+
+</android.support.constraint.ConstraintLayout>

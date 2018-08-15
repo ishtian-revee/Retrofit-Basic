@@ -20,7 +20,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.RepositoryListActivity"></activity>
+        <activity android:name=".ui.activities.RepositoryListActivity" />
+        <activity android:name=".ui.activities.PostActivity"></activity>
     </application>
 
 </manifest>
