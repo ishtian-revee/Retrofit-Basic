@@ -25,12 +25,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txt_email"
+        android:id="@+id/txt_user_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
         android:fontFamily="sans-serif"
-        android:text="Email"
+        android:text="Username"
         android:textColor="@color/color_pink"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/txt_insert_user_info"
@@ -38,52 +38,52 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_insert_user_info" />
 
     <EditText
-        android:id="@+id/et_email"
+        android:id="@+id/et_user_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:backgroundTint="@color/color_blue"
         android:ems="10"
-        android:hint="Insert email address"
-        android:inputType="textEmailAddress"
+        android:hint="Insert your name"
+        android:inputType="textPersonName"
         android:textColor="@color/color_blue"
         android:textColorHint="@color/color_low_bluish"
         android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="@+id/txt_email"
-        app:layout_constraintStart_toStartOf="@+id/txt_email"
-        app:layout_constraintTop_toBottomOf="@+id/txt_email" />
+        app:layout_constraintEnd_toEndOf="@+id/txt_user_name"
+        app:layout_constraintStart_toStartOf="@+id/txt_user_name"
+        app:layout_constraintTop_toBottomOf="@+id/txt_user_name" />
 
     <TextView
-        android:id="@+id/txt_password"
+        android:id="@+id/txt_job"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:fontFamily="sans-serif"
-        android:text="Password"
+        android:text="Job"
         android:textColor="@color/color_pink"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/et_email"
-        app:layout_constraintStart_toStartOf="@+id/et_email"
-        app:layout_constraintTop_toBottomOf="@+id/et_email" />
+        app:layout_constraintEnd_toEndOf="@+id/et_user_name"
+        app:layout_constraintStart_toStartOf="@+id/et_user_name"
+        app:layout_constraintTop_toBottomOf="@+id/et_user_name" />
 
     <EditText
-        android:id="@+id/et_password"
+        android:id="@+id/et_job"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:backgroundTint="@color/color_blue"
         android:ems="10"
-        android:hint="Insert password"
-        android:inputType="textPassword"
+        android:hint="Insert your job"
+        android:inputType="text"
         android:textColor="@color/color_blue"
         android:textColorHint="@color/color_low_bluish"
         android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="@+id/txt_password"
-        app:layout_constraintStart_toStartOf="@+id/txt_password"
-        app:layout_constraintTop_toBottomOf="@+id/txt_password" />
+        app:layout_constraintEnd_toEndOf="@+id/txt_job"
+        app:layout_constraintStart_toStartOf="@+id/txt_job"
+        app:layout_constraintTop_toBottomOf="@+id/txt_job" />
 
     <Button
-        android:id="@+id/btn_create"
+        android:id="@+id/btn_send"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -95,8 +95,8 @@
         android:textAllCaps="false"
         android:fontFamily="sans-serif"
         android:background="@drawable/ripple_button_pink"
-        app:layout_constraintEnd_toEndOf="@+id/et_password"
-        app:layout_constraintStart_toStartOf="@+id/et_password"
-        app:layout_constraintTop_toBottomOf="@+id/et_password" />
+        app:layout_constraintEnd_toEndOf="@+id/et_job"
+        app:layout_constraintStart_toStartOf="@+id/et_job"
+        app:layout_constraintTop_toBottomOf="@+id/et_job" />
 
 </android.support.constraint.ConstraintLayout>
