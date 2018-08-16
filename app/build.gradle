@@ -35,5 +35,10 @@ dependencies {
 
     // retrofit ====================================================================================
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+
+    // gson converter ==============================================================================
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
+    // http logging interceptor ====================================================================
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
 }

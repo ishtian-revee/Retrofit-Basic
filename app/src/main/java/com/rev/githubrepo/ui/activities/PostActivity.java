@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.rev.githubrepo.BuildConfig;
 import com.rev.githubrepo.R;
 import com.rev.githubrepo.api.model.User;
 import com.rev.githubrepo.api.service.UserClient;
@@ -12,6 +13,8 @@ import com.rev.githubrepo.api.service.UserClient;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,6 +33,8 @@ public class PostActivity extends AppCompatActivity {
     private Retrofit.Builder builder;
     private UserClient client;
     private Call<User> call;
+    private OkHttpClient.Builder okHttpClientBuilder;
+    private HttpLoggingInterceptor interceptor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +54,9 @@ public class PostActivity extends AppCompatActivity {
     }
 
     public void sendNetworkingRequest(User user){
-        // initializing builder, declaring base url add adding converter factory
-        // creating retrofit instance
-        builder = new Retrofit.Builder()
-                .baseUrl("https://reqres.in/api/")
-                .addConverterFactory(GsonConverterFactory.create());
-        retrofit = builder.build();
+        // select any of this 2 function and uncomment the another one
+//        sendWithDefaultRetrofit();
+        sendWithOkHttp();
 
         client = retrofit.create(UserClient.class);
         call = client.createAccount(user);
@@ -62,7 +64,7 @@ public class PostActivity extends AppCompatActivity {
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                showMessage("Successfully done.\n User id: " + response.body().getId());
+                showMessage("Successfully done.\nUser id: " + response.body().getId());
             }
 
             @Override
@@ -70,6 +72,37 @@ public class PostActivity extends AppCompatActivity {
                 showMessage("Something went wrong...!!!");
             }
         });
+    }
+
+    // generally retrofit uses the default instance okhttp as the network layer
+    public void sendWithDefaultRetrofit(){
+        // initializing builder, declaring base url add adding converter factory
+        // creating retrofit instance
+        builder = new Retrofit.Builder()
+                .baseUrl("https://reqres.in/api/")
+                .addConverterFactory(GsonConverterFactory.create());
+        retrofit = builder.build();
+    }
+
+    // this method is to make a custom okhttp instance as the network layer for retrofit
+    public void sendWithOkHttp(){
+        // create OkHttp client
+        okHttpClientBuilder = new OkHttpClient.Builder();
+        interceptor = new HttpLoggingInterceptor();
+        // to have all information such as request lines, headers and body
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        // the app will only log if we are in development mode
+        if (BuildConfig.DEBUG){
+            okHttpClientBuilder.addInterceptor(interceptor);
+        }
+
+        // creating retrofit instance
+        builder = new Retrofit.Builder()
+                .baseUrl("https://reqres.in/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClientBuilder.build());
+        retrofit = builder.build();
     }
 
     public void showMessage(String msg){
