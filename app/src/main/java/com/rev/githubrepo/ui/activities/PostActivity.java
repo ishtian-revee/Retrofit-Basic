@@ -1,5 +1,7 @@
 package com.rev.githubrepo.ui.activities;
 
+import android.app.IntentService;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -9,6 +11,7 @@ import com.rev.githubrepo.BuildConfig;
 import com.rev.githubrepo.R;
 import com.rev.githubrepo.api.model.User;
 import com.rev.githubrepo.api.service.UserClient;
+import com.rev.githubrepo.background.BackgroundService;
 
 import java.io.IOException;
 
@@ -77,19 +80,15 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
-        // synchronous way
-        try {
-            Response<User> result = call.execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         /*
         if we run a synchronous network request on the UI thread, it will hold the entire UI until
         the request is done. that is why it makes the app crashes every time whenever we run a
         synchronous network request in UI thread. so make sure we always run synchronous network
         request on the thread which is not the UI thread
          */
+
+        Intent intent = new Intent(PostActivity.this, BackgroundService.class);
+        startActivity(intent);
     }
 
     // generally retrofit uses the default instance okhttp as the network layer
