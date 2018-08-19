@@ -10,6 +10,8 @@ import com.rev.githubrepo.R;
 import com.rev.githubrepo.api.model.User;
 import com.rev.githubrepo.api.service.UserClient;
 
+import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -61,6 +63,8 @@ public class PostActivity extends AppCompatActivity {
         client = retrofit.create(UserClient.class);
         call = client.createAccount(user);
 
+        // there are two ways of network requests
+        // asynchronous way
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -72,6 +76,20 @@ public class PostActivity extends AppCompatActivity {
                 showMessage("Something went wrong...!!!");
             }
         });
+
+        // synchronous way
+        try {
+            Response<User> result = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /*
+        if we run a synchronous network request on the UI thread, it will hold the entire UI until
+        the request is done. that is why it makes the app crashes every time whenever we run a
+        synchronous network request in UI thread. so make sure we always run synchronous network
+        request on the thread which is not the UI thread
+         */
     }
 
     // generally retrofit uses the default instance okhttp as the network layer
