@@ -35,4 +35,10 @@ public class MainActivity extends AppCompatActivity {
         Intent post = new Intent(MainActivity.this, PostActivity.class);
         startActivity(post);
     }
+
+    @OnClick(R.id.download_image_layout)
+    public void onClickDownloadImage(){
+        Intent down = new Intent(MainActivity.this, DownloadActivity.class);
+        startActivity(down);
+    }
 }

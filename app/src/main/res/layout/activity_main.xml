@@ -90,4 +90,36 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/download_image_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ripple_white_solid"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="@+id/send_object_layout"
+        app:layout_constraintStart_toStartOf="@+id/send_object_layout"
+        app:layout_constraintTop_toBottomOf="@+id/send_object_layout">
+
+        <TextView
+            android:id="@+id/txt_download_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif"
+            android:text="Download Image"
+            android:textColor="@color/color_blue"
+            android:textSize="22sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
