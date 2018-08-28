@@ -18,7 +18,9 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -108,6 +110,19 @@ public class PostActivity extends AppCompatActivity {
         interceptor = new HttpLoggingInterceptor();
         // to have all information such as request lines, headers and body
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        // managing request headers in okhttp interceptor
+        // the advantage of this is that the interceptor will be called for every single request we are doing
+//        okHttpClientBuilder.addInterceptor(new Interceptor() {
+//            @Override
+//            public okhttp3.Response intercept(Chain chain) throws IOException {
+//                // getting the chain request
+//                Request request = chain.request();
+//                // adding header to the new request
+//                Request.Builder newRequest = request.newBuilder().header("Authorization", "secret-key");
+//                return chain.proceed(newRequest.build());
+//            }
+//        });
 
         // the app will only log if we are in development mode
         if (BuildConfig.DEBUG){
