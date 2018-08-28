@@ -30,6 +30,7 @@ public class RepositoryListActivity extends AppCompatActivity {
     private Retrofit.Builder builder;
     private GitHubClient client;
     private Call<List<GitHubRepo>> call;
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,10 @@ public class RepositoryListActivity extends AppCompatActivity {
 
         client = retrofit.create(GitHubClient.class);
         call = client.reposForUser("ishtian-revee");
+
+        // for dynamic url: base url + end point
+//        url = "https://api.github.com/ishtian-revee";
+//        call = client.reposForUser(url);
 
         call.enqueue(new Callback<List<GitHubRepo>>() {
             @Override
