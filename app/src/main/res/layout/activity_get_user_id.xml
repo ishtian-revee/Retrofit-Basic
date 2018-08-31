@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rev.githubrepo.ui.activities.GetUserIdActivity">
+
+    <TextView
+        android:id="@+id/txt_user_id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:fontFamily="sans-serif"
+        android:text="User ID"
+        android:textColor="@color/color_pink"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/et_user_id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/color_blue"
+        android:ems="10"
+        android:hint="Insert user id"
+        android:inputType="text"
+        android:textColor="@color/color_blue"
+        android:textColorHint="@color/color_low_bluish"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@+id/txt_user_id"
+        app:layout_constraintStart_toStartOf="@+id/txt_user_id"
+        app:layout_constraintTop_toBottomOf="@+id/txt_user_id" />
+
+    <Button
+        android:id="@+id/btn_get_user"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/ripple_button_pink"
+        android:fontFamily="sans-serif"
+        android:text="Get User"
+        android:textAllCaps="false"
+        android:textColor="@color/color_white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/et_user_id"
+        app:layout_constraintStart_toStartOf="@+id/et_user_id"
+        app:layout_constraintTop_toBottomOf="@+id/et_user_id" />
+
+</android.support.constraint.ConstraintLayout>

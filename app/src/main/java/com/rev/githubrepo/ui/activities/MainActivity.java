@@ -41,4 +41,10 @@ public class MainActivity extends AppCompatActivity {
         Intent down = new Intent(MainActivity.this, DownloadActivity.class);
         startActivity(down);
     }
+
+    @OnClick(R.id.get_username_layout)
+    public void onClickGetUsername(){
+        Intent get = new Intent(MainActivity.this, GetUserIdActivity.class);
+        startActivity(get);
+    }
 }

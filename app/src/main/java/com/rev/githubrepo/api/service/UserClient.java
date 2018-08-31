@@ -1,22 +1,31 @@
 package com.rev.githubrepo.api.service;
 
 import com.rev.githubrepo.api.model.User;
+import com.rev.githubrepo.api.model.User2;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 public interface UserClient {
 
     @POST("users")
     Call<User> createAccount(@Body User user);
+
+//    @GET("users/{id}")
+//    Call<User2> getUserById(@Path("id") String user);
+
+    @GET("posts/{id}")
+    Call<User2> getUserById(@Path("id") String user);
 
     // with custom header requests
     @Headers({

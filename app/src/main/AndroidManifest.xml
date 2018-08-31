@@ -25,7 +25,8 @@
         </activity>
         <activity android:name=".ui.activities.RepositoryListActivity" />
         <activity android:name=".ui.activities.PostActivity" />
-        <activity android:name=".ui.activities.DownloadActivity"></activity>
+        <activity android:name=".ui.activities.DownloadActivity" />
+        <activity android:name=".ui.activities.GetUserIdActivity"></activity>
     </application>
 
 </manifest>
