@@ -27,6 +27,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class PostActivity extends AppCompatActivity {
 
@@ -101,6 +102,12 @@ public class PostActivity extends AppCompatActivity {
                 .baseUrl("https://reqres.in/api/")
                 .addConverterFactory(GsonConverterFactory.create());
         retrofit = builder.build();
+
+        // we can use scalar converter factory to to make a plain tex request
+//        builder = new Retrofit.Builder()
+//                .baseUrl("https://reqres.in/api/")
+//                .addConverterFactory(ScalarsConverterFactory.create());
+//        retrofit = builder.build();
     }
 
     // this method is to make a custom okhttp instance as the network layer for retrofit
