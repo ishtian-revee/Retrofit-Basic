@@ -3,6 +3,8 @@ package com.rev.githubrepo.api.service;
 import com.rev.githubrepo.api.model.User;
 import com.rev.githubrepo.api.model.User2;
 
+import java.util.List;
+
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -15,6 +17,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface UserClient {
 
@@ -54,5 +57,33 @@ public interface UserClient {
             @Part("title") RequestBody title,
             @Part MultipartBody.Part url,
             @Part MultipartBody.Part thumbnailUrl
+    );
+
+    // for multiple query parameters
+    // multiple query parameters with @Query
+    @GET("user")
+    Call<ResponseBody> searchForUsers(
+            @Query("id") int id,
+            @Query("sort") String order,
+            @Query("page") int page
+    );
+
+    // optional
+    // Integer, String these are nullable types
+    // multiple query parameters by passing null
+    @GET("user")
+    Call<ResponseBody> searchForUsers(
+            @Query("id") Integer id,
+            @Query("sort") String order,
+            @Query("page") Integer page
+    );
+
+    // for searching multiple attributes at the same time
+    // // multiple query parameters with List<>
+    @GET("user")
+    Call<ResponseBody> searchForUsers(
+            @Query("id") List<Integer> id,
+            @Query("sort") String order,
+            @Query("page") Integer page
     );
 }

@@ -11,9 +11,12 @@ import com.rev.githubrepo.api.model.User2;
 import com.rev.githubrepo.api.service.UserClient;
 import com.rev.githubrepo.helpers.ErrorUtils;
 
+import java.util.Arrays;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,6 +31,7 @@ public class GetUserIdActivity extends AppCompatActivity {
 
     private UserClient client;
     private Call<User2> call;
+    private Call<ResponseBody> multipleQueryCall;
     private String url;
 
     // create retrofit instance
@@ -95,6 +99,28 @@ public class GetUserIdActivity extends AppCompatActivity {
                 showMessage("On failure: ");
             }
         });
+
+        // for multiple query parts
+        multipleQueryCall = client.searchForUsers(11, "asc", 1);
+
+        // for optional parameters
+        multipleQueryCall = client.searchForUsers(11, null, null);
+
+        // for multiple ids
+        multipleQueryCall = client.searchForUsers(Arrays.asList(11, 12, 13), null, 1);
+
+        // asynchronous call
+//        multipleQueryCall.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//            }
+//        });
     }
 
     public void showMessage(String msg){
