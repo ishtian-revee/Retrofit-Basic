@@ -1,11 +1,14 @@
 package com.rev.githubrepo.ui.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.rev.githubrepo.R;
+import com.rev.githubrepo.api.model.AccessToken;
 import com.rev.githubrepo.api.model.GitHubRepo;
 import com.rev.githubrepo.api.service.GitHubClient;
 import com.rev.githubrepo.ui.adapter.GitHubRepoAdapter;
@@ -26,10 +29,19 @@ public class RepositoryListActivity extends AppCompatActivity {
     @BindView(R.id.repo_list_view)
     public ListView listView;
 
+    // oAuth credentials
+    // it should either define client id and secret as constants or in string resources
+    private static final String API_BASE_URL = "https://example.com/oauthloginpage";
+    private static final String API_OAUTH_CLIENTID = "replace-me";
+    private static final String API_OAUTH_CLIENTSECRET = "replace-me";
+    private static final String API_OAUTH_REDIRECT = "nl.jpelgrm.retrofit2oauthrefresh://oauth";
+
+
     private Retrofit retrofit;
     private Retrofit.Builder builder;
     private GitHubClient client;
     private Call<List<GitHubRepo>> call;
+    private Call<AccessToken> accessTokenCall;
     private String url;
 
     @Override
@@ -39,7 +51,45 @@ public class RepositoryListActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         initRetrofit();
+
+        // for oAuth authentication
+//        Intent intent = new Intent(
+//                Intent.ACTION_VIEW,
+//                Uri.parse(API_BASE_URL + "/login" + "?client_id=" + API_OAUTH_CLIENTID + "&redirect_uri=" + API_OAUTH_REDIRECT));
+//        startActivity(intent);
     }
+
+    // for oAuth authentication
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        Uri uri = getIntent().getData();
+//
+//        if(uri != null && uri.toString().startsWith(API_OAUTH_REDIRECT)){
+//            String code = uri.getQueryParameter("code");
+//
+//            // initializing builder, declaring base url add adding converter factory
+//            builder = new Retrofit.Builder()
+//                    .baseUrl("https://github.com/")
+//                    .addConverterFactory(GsonConverterFactory.create());
+//            retrofit = builder.build();
+//
+//            client = retrofit.create(GitHubClient.class);
+//            accessTokenCall = client.getAccessToken(API_OAUTH_CLIENTID, API_OAUTH_CLIENTSECRET, code);
+//
+//            accessTokenCall.enqueue(new Callback<AccessToken>() {
+//                @Override
+//                public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
+//                    showMessage("success!");
+//                }
+//
+//                @Override
+//                public void onFailure(Call<AccessToken> call, Throwable t) {
+//                    showMessage("error!");
+//                }
+//            });
+//        }
+//    }
 
     public void initRetrofit(){
         // initializing builder, declaring base url add adding converter factory

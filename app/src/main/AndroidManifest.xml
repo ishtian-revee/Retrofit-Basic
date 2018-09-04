@@ -23,10 +23,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.RepositoryListActivity" />
+        <activity android:name=".ui.activities.RepositoryListActivity">
+            <!--for oAuth authentication-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.VIEW" />-->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+                <!--<category android:name="android.intent.category.BROWSABLE" />-->
+                <!--<data-->
+                    <!--android:host="redirect uri"-->
+                    <!--android:scheme="callback" />-->
+            <!--</intent-filter>-->
+        </activity>
         <activity android:name=".ui.activities.PostActivity" />
         <activity android:name=".ui.activities.DownloadActivity" />
-        <activity android:name=".ui.activities.GetUserIdActivity"></activity>
+        <activity android:name=".ui.activities.GetUserIdActivity" />
     </application>
 
 </manifest>
