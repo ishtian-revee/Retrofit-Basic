@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rev.githubrepo.R;
+import com.rev.githubrepo.api.ServiceGenerator;
 import com.rev.githubrepo.api.model.AccessToken;
 import com.rev.githubrepo.api.model.GitHubRepo;
 import com.rev.githubrepo.api.service.GitHubClient;
@@ -102,14 +103,16 @@ public class RepositoryListActivity extends AppCompatActivity {
 //                .addConverterFactory(GsonConverterFactory.create(gson));
 //        retrofit = builder.build();
 
-
         // initializing builder, declaring base url add adding converter factory
-        builder = new Retrofit.Builder()
-                .baseUrl("https://api.github.com/")
-                .addConverterFactory(GsonConverterFactory.create());
-        retrofit = builder.build();
+//        builder = new Retrofit.Builder()
+//                .baseUrl("https://api.github.com/")
+//                .addConverterFactory(GsonConverterFactory.create());
+//        retrofit = builder.build();
+//
+//        client = retrofit.create(GitHubClient.class);
 
-        client = retrofit.create(GitHubClient.class);
+        // for sustainable client
+        client = ServiceGenerator.createService(GitHubClient.class);
         call = client.reposForUser("ishtian-revee");
 
         // for dynamic url: base url + end point
