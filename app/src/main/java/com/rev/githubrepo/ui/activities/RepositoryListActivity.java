@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.rev.githubrepo.R;
 import com.rev.githubrepo.api.model.AccessToken;
 import com.rev.githubrepo.api.model.GitHubRepo;
 import com.rev.githubrepo.api.service.GitHubClient;
 import com.rev.githubrepo.ui.adapter.GitHubRepoAdapter;
 
+import java.text.DateFormat;
 import java.util.List;
 
 import butterknife.BindView;
@@ -92,6 +95,14 @@ public class RepositoryListActivity extends AppCompatActivity {
 //    }
 
     public void initRetrofit(){
+        // customizing gson
+//        Gson gson = new GsonBuilder().serializeNulls().setDateFormat(DateFormat.LONG).create();
+//        builder = new Retrofit.Builder()
+//                .baseUrl("https://api.github.com/")
+//                .addConverterFactory(GsonConverterFactory.create(gson));
+//        retrofit = builder.build();
+
+
         // initializing builder, declaring base url add adding converter factory
         builder = new Retrofit.Builder()
                 .baseUrl("https://api.github.com/")
