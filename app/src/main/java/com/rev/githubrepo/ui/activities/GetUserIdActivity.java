@@ -12,6 +12,8 @@ import com.rev.githubrepo.api.service.UserClient;
 import com.rev.githubrepo.helpers.ErrorUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -121,6 +123,13 @@ public class GetUserIdActivity extends AppCompatActivity {
 //
 //            }
 //        });
+
+        // creating a map fot dynamic query parameter
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", 11);
+        map.put("sort", "asc");
+        map.put("page", 1);
+        Call<ResponseBody> dynamicQueryCall = client.searchForUsers(map);
     }
 
     public void showMessage(String msg){

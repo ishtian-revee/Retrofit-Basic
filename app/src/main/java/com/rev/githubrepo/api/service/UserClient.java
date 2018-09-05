@@ -4,6 +4,7 @@ import com.rev.githubrepo.api.model.User;
 import com.rev.githubrepo.api.model.User2;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -18,6 +19,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 public interface UserClient {
 
@@ -85,5 +87,11 @@ public interface UserClient {
             @Query("id") List<Integer> id,
             @Query("sort") String order,
             @Query("page") Integer page
+    );
+
+    // dynamic query parameter by using map
+    @GET("user")
+    Call<ResponseBody> searchForUsers(
+            @QueryMap Map<String, Object> map
     );
 }
