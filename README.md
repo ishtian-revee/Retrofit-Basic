@@ -76,7 +76,7 @@ Call<List<GitHubRepo>> call = client.reposForUser("ishtian-revee");   // it fetc
 call.enqueue(new Callback<List<GitHubRepo>>() {  
     @Override
     public void onResponse(Call<List<GitHubRepo>> call, Response<List<GitHubRepo>> response) {
-        // The network call was a success and we got a response
+        // the network call was a success and we got a response
         // TODO: use the repository list and display it
     }
 
@@ -85,6 +85,60 @@ call.enqueue(new Callback<List<GitHubRepo>>() {
     public void onFailure(Call<List<GitHubRepo>> call, Throwable t) {
         // the network call was a failure
         // TODO: handle error
+    }
+});
+```
+
+## 5. Send Objects as Request Body
+
+Retrofit offers the ability to pass objects within the **request body**. Objects can be specified for use as HTTP request
+body by using the `@Body` annotation.
+
+```
+public interface UserClient {  
+    @POST("/users")
+    Call<Task> createUser(@Body User user);   // retrofit will create a request body to pass user object
+}
+```
+
+---
+
+And the user class could be look like this:
+```
+public class User {
+    // fields
+    private int id;
+    private String username;
+
+    public User(int id, String username){
+        this.id = id;
+        this.username = username;
+    }
+
+    // getters
+    public String getId(){ return this.id; }
+    public String getUsername(){ return this.username; }
+}
+```
+
+---
+
+Instantiating a new `User` object fills its properties with values for id and username. Further, when passing the object to the
+service class, the object fields and values will be converted to **JSON**
+
+```
+User user = new Task(1, "ishtian revee");  
+Call<Task> call = taskService.createTask(task);
+call.enqueue(new Callback<List<GitHubRepo>>() {  
+    @Override
+    public void onResponse(Call<List<GitHubRepo>> call, Response<List<GitHubRepo>> response) {
+        // we can access to the response body and get information
+        Toast.makeText(this, "Success! User id: " + response.body().getId(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFailure(Call<List<GitHubRepo>> call, Throwable t) {
+        // the network call was a failure
     }
 });
 ```
