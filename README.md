@@ -362,3 +362,92 @@ public interface UserService {
     Call<List<Task>> getTasks(@Header("Content-Range") String contentRange);
 }
 ```
+
+## 11. Synchronous and Asynchronous Request
+
+ Retrofit supports **synchronous** and **asynchronous** request execution. Users define the concrete execution by setting a return type (synchronous) or not
+ (asynchronous) to service methods.
+
+ All we were doing all the way from the beginning was actually the asynchronous way.
+
+ ***NOTE: If we run a synchronous network request on the UI thread, it will hold the entire UI until the request is done. That is why it makes
+ the app crashes every time whenever we run a synchronous network request in UI thread. So make sure we always run synchronous network
+ request on the thread which is not the UI thread.***
+
+ The code given below could be the class for background thread for synchronous network request:
+
+ ```
+ public class BackgroundService extends IntentService {
+
+    public BackgroundService() {
+        super("Background Service");
+    }
+
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
+        User user = new User("Revee", "Engineer");
+
+        // create retrofit instance
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl("https://reqres.in/api/")
+                .addConverterFactory(GsonConverterFactory.create());
+
+        Retrofit retrofit = builder.build();
+
+        // get client and call object for the request
+        UserClient client = retrofit.create(UserClient.class);
+        Call<User> call = client.createAccount(user);
+
+        // synchronous way of network request
+        try {
+            Response<User> result = call.execute();
+            Log.i("Retrofit", "success!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i("Retrofit", "failure!");
+        }
+    }
+}
+ ```
+
+ ---
+
+And in the UI thread we can call like this:
+
+```
+Intent intent = new Intent(PostActivity.this, BackgroundService.class);
+startActivity(intent);
+```
+
+## 12. Manage Request Headers in OkHttp Interceptor
+
+Adding HTTP request headers is a good practice to add information for API requests. A common example is authorization using the `Authorization` header field.
+If we need the header field including its value on almost every request, we can use an interceptor to add this piece of information. This way, we don’t
+need to add the `@Header` annotation to every endpoint declaration.
+
+```
+OkHttpClient.Builder httpClient = new OkHttpClient.Builder();  
+httpClient.addInterceptor(new Interceptor() {  
+    @Override
+    public Response intercept(Interceptor.Chain chain) throws IOException {
+        Request original = chain.request();
+
+        // Request customization: add request headers
+        Request.Builder requestBuilder = original.newBuilder()
+                .header("Authorization", "auth-value"); // <-- this is the important line
+
+        Request request = requestBuilder.build();
+        return chain.proceed(request);
+    }
+});
+
+OkHttpClient client = httpClient.build();
+```
+
+---
+
+Using Retrofit 2 and an OkHttp interceptor, you can add multiple request headers with the same key. The method you need to use is `.addHeader`.
+
+**NOTE:**
+* `.header(key, val)`: will override preexisting headers identified by key
+* `.addHeader(key, val)`: will add the header and don’t override preexisting ones
