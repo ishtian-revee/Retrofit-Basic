@@ -143,11 +143,11 @@ call.enqueue(new Callback<List<GitHubRepo>>() {
 });
 ```
 
-### 6. Logging Interceptor
+## 6. Logging Interceptor
 
 While developing your app and for debugging purposes it is nice to have a log feature integrated to show request and response
 information. Since logging is not integrated by default anymore in Retrofit 2, we need to add a **logging interceptor** for **OkHttp**.
-Luckily **OkHttp** already ships with this interceptor and we only need to activate it for our **OkHttpClient**.
+Luckily **OkHttp** already ships with this interceptor and we only need to activate it for our `OkHttpClient`.
 
 ```
 // create OkHttp client
@@ -170,12 +170,117 @@ Retrofit retrofit = new Retrofit.Builder()
 
 ---
 
-## Log Levels
+### Log Levels
 
 The logging interceptor allows us to change how much data should be logged and it has 4 different levels. These are:
 
-1. **NONE**: No logging. Use this log level for production environments to enhance your apps performance by skipping any logging operation.
-2. **BASIC**: Log request type, url, size of request body, response status and size of response body.
-3. **HEADERS**: Log request and response headers, request type, url, response status.
-4. **BODY**: Log request and response headers and body. This is the most complete log level and will print out every related information
+1. `NONE`: No logging. Use this log level for production environments to enhance your apps performance by skipping any logging operation.
+2. `BASIC`: Log request type, url, size of request body, response status and size of response body.
+3. `HEADERS`: Log request and response headers, request type, url, response status.
+4. `BODY`: Log request and response headers and body. This is the most complete log level and will print out every related information
 for your request and response.
+
+
+# 7. Uploading Files to Server
+
+Using Retrofit 2, we need to use either OkHttp’s `RequestBody` or `MultipartBody.Part` classes and encapsulate our file into a request body.
+Let’s have a look at the interface definition for file uploads.
+
+```
+public interface FileUploadService {  
+    @Multipart
+    @POST("upload")
+    Call<ResponseBody> upload(
+        @Part("description") RequestBody description,
+        @Part MultipartBody.Part file
+    );
+}
+```
+
+Here,
+
+* The description is just a string value wrapped within a `RequestBody` instance.
+* We use the `MultipartBody.Part` class that allows us to send the actual file name besides the binary file data with the request.
+
+---
+
+### Android Client Code
+
+```
+private void uploadFile(Uri fileUri) {  
+    // create upload service client
+    FileUploadService service = ServiceGenerator.createService(FileUploadService.class);
+
+    // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
+    // use the FileUtils to get the actual file by uri
+    File file = FileUtils.getFile(this, fileUri);
+
+    // create RequestBody instance from file
+    RequestBody requestFile = RequestBody.create(MediaType.parse(getContentResolver().getType(fileUri)), file);
+
+    // MultipartBody.Part is used to send also the actual file name
+    MultipartBody.Part body = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
+
+    // add another part within the multipart request
+    String descriptionString = "hello, this is description speaking";
+    RequestBody description = RequestBody.create(okhttp3.MultipartBody.FORM, descriptionString);
+
+    // finally, execute the request
+    Call<ResponseBody> call = service.upload(description, body);
+    call.enqueue(new Callback<ResponseBody>() {
+        @Override
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            Log.v("Upload", "success");
+        }
+
+        @Override
+        public void onFailure(Call<ResponseBody> call, Throwable t) {
+            Log.e("Upload error:", t.getMessage());
+        }
+    });
+}
+```
+
+# 8. Passing Multiple Parts
+
+`@PartMap` is an additional annotation for a request parameter, which allows us to specify how many and which parts we send during runtime.
+This can very helpful if your form is very long, but only a few of those input field values are actually send.
+
+```
+public interface FileUploadService {  
+    @Multipart
+    @POST("upload")
+    Call<ResponseBody> uploadFileWithPartMap(
+            @PartMap() Map<String, RequestBody> partMap,
+            @Part MultipartBody.Part file);
+}
+```
+
+---
+
+Finally, let's use this method and view the entire code from creating the Retrofit service, to filling the request with data and enqueuing the request:
+
+```
+Uri fileUri = ... // from a file chooser or a camera intent
+
+// create upload service client
+FileUploadService service =  
+        ServiceGenerator.createService(FileUploadService.class);
+
+// create part for file (photo, video, ...)
+MultipartBody.Part body = prepareFilePart("photo", fileUri);
+
+// create a map of data to pass along
+RequestBody description = createPartFromString("hello, this is description speaking");  
+RequestBody place = createPartFromString("Magdeburg");  
+RequestBody time = createPartFromString("2016");
+
+HashMap<String, RequestBody> map = new HashMap<>();  
+map.put("description", description);  
+map.put("place", place);  
+map.put("time", time);
+
+// finally, execute the request
+Call<ResponseBody> call = service.uploadFileWithPartMap(map, body);  
+call.enqueue(...);  
+```
