@@ -142,3 +142,40 @@ call.enqueue(new Callback<List<GitHubRepo>>() {
     }
 });
 ```
+
+### 6. Logging Interceptor
+
+While developing your app and for debugging purposes it is nice to have a log feature integrated to show request and response
+information. Since logging is not integrated by default anymore in Retrofit 2, we need to add a **logging interceptor** for **OkHttp**.
+Luckily **OkHttp** already ships with this interceptor and we only need to activate it for our **OkHttpClient**.
+
+```
+// create OkHttp client
+OkHttpClient.Builder httpClient = new OkHttpClient.Builder();  
+
+// create logging interceptor
+HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+// set your desired log level
+logging.setLevel(Level.BODY);
+
+// add logging as last interceptor
+httpClient.addInterceptor(logging);  // <-- this is the important line!
+
+Retrofit retrofit = new Retrofit.Builder()  
+   .baseUrl(API_BASE_URL)
+   .addConverterFactory(GsonConverterFactory.create())
+   .client(httpClient.build())
+   .build();
+```
+
+---
+
+## Log Levels
+
+The logging interceptor allows us to change how much data should be logged and it has 4 different levels. These are:
+
+1. **NONE**: No logging. Use this log level for production environments to enhance your apps performance by skipping any logging operation.
+2. **BASIC**: Log request type, url, size of request body, response status and size of response body.
+3. **HEADERS**: Log request and response headers, request type, url, response status.
+4. **BODY**: Log request and response headers and body. This is the most complete log level and will print out every related information
+for your request and response.
