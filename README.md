@@ -181,7 +181,7 @@ The logging interceptor allows us to change how much data should be logged and i
 for your request and response.
 
 
-# 7. Uploading Files to Server
+## 7. Uploading Files to Server
 
 Using Retrofit 2, we need to use either OkHttp’s `RequestBody` or `MultipartBody.Part` classes and encapsulate our file into a request body.
 Let’s have a look at the interface definition for file uploads.
@@ -241,7 +241,7 @@ private void uploadFile(Uri fileUri) {
 }
 ```
 
-# 8. Passing Multiple Parts
+## 8. Passing Multiple Parts
 
 `@PartMap` is an additional annotation for a request parameter, which allows us to specify how many and which parts we send during runtime.
 This can very helpful if your form is very long, but only a few of those input field values are actually send.
@@ -283,4 +283,82 @@ map.put("time", time);
 // finally, execute the request
 Call<ResponseBody> call = service.uploadFileWithPartMap(map, body);  
 call.enqueue(...);  
+```
+
+## 9. Uploading Multiple Files to Server
+
+There are two ways to upload multiple files to server:
+
+* Fixed
+* Dynamic
+
+We can use `List<>` for multiple files. Our interface can be look like this:
+
+```
+public interface FileUploadService {  
+    // new code for multiple files
+    @Multipart
+    @POST("upload")
+    Call<ResponseBody> uploadMultipleFiles(
+            @Part("description") RequestBody description,
+            @Part List<MultipartBody.Part> files);
+}
+```
+
+---
+
+And now our method can be this:
+
+```
+...
+
+List<MultipartBody.Part> parts = new ArrayList<>();
+
+for(int i=0; i<fileUris.size(); i++){
+  parts.add(prepareFilePart("" + i, fileUris.get(i)));
+}
+
+// finally, execute the request
+Call<ResponseBody> call = service.uploadFileWithPartMap(createPartFromString(descriptio.getText().toString()), parts);
+
+call.enqueue(...);  
+```
+
+## 10. Custom Request Headers
+
+Retrofit provides two options to define HTTP request header fields:
+
+* **Static**: Static headers can’t be changed for different requests. The header’s key and value are fixed and initiated with the app startup.
+* **Dynamic**:  In contrast, dynamic headers must be set for each request.
+
+### Static Headers
+
+```
+public interface UserService {  
+    @Headers("Cache-Control: max-age=640000")
+    @GET("/tasks")
+    Call<List<Task>> getTasks();
+}
+```
+
+```
+public interface UserService {  
+    @Headers({
+        "Accept: application/vnd.yourapi.v1.full+json",
+        "User-Agent: Your-App-Name"
+    })
+    @GET("/tasks/{task_id}")
+    Call<Task> getTask(@Path("task_id") long taskId);
+}
+```
+
+---
+
+### Dynamic Headers
+
+```
+public interface UserService {  
+    @GET("/tasks")
+    Call<List<Task>> getTasks(@Header("Content-Range") String contentRange);
+}
 ```
