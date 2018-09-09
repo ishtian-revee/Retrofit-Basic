@@ -673,3 +673,77 @@ public interface TaskService {
     Call<Task> createTask(@FieldMap Map<String, Object> map);
 }
 ```
+
+## 17. Sending Plain Text Request Body
+
+### Solution 1: Scalars Converter
+
+Within the available converters, you’ll also find a **Retrofit Scalars Converter** that does the job of parsing any Java primitive to be
+put within the request body. Conversion applies to both directions: *requests* and *responses*.
+
+After adding the dependency we need to add the scalars converter to our Retrofit instance. Please be aware that the order we are adding
+response converters matters! As a rule of thumb, add Gson as the last converter to our Retrofit instance
+
+```
+Retrofit retrofit = new Retrofit.Builder()  
+        .addConverterFactory(ScalarsConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl("https://your.base.url/")
+        .build();
+```
+
+---
+
+### Solution 2: Use RequestBody Class
+
+The interface will look like this:
+
+```
+public interface ScalarService {  
+    @POST("path")
+    Call<ResponseBody> getStringRequestBody(@Body RequestBody body);
+}
+```
+
+The `ResponseBody` class allows us to receive any response data. The following code snippet shows the usage of both used classes in more detail:
+
+```
+String text = "plain text request body";  
+RequestBody body = RequestBody.create(MediaType.parse("text/plain"), text);
+
+Call<String> call = userClient.sendMessage(body);
+cal.enqueue(...);
+```
+
+## 18. Add Query Parameters to Every Requests
+
+If you’ve used Retrofit before, you’re aware of the `@Query` annotation used to add query parameters for single requests. There are situations
+where you want to add the same query parameter to every request, just like adding an `Authorization` header to every request passing the
+authentication token. If you’re requesting an API which accepts an `apikey` as a request parameter, it’s valuable to use an interceptor
+instead add the query parameter to every request method.
+
+You can do that by adding a new request interceptor to the `OkHttpClient`. Intercept the actual request and get the `HttpUrl`. The http url is
+required to add query parameters since it will change the previously generated request url by appending the query parameter name and its value.
+
+```
+OkHttpClient.Builder httpClient =  
+    new OkHttpClient.Builder();
+httpClient.addInterceptor(new Interceptor() {  
+    @Override
+    public Response intercept(Chain chain) throws IOException {
+        Request original = chain.request();
+        HttpUrl originalHttpUrl = original.url();
+
+        HttpUrl url = originalHttpUrl.newBuilder()
+                .addQueryParameter("apikey", "your-actual-api-key")
+                .build();
+
+        // Request customization: add request headers
+        Request.Builder requestBuilder = original.newBuilder()
+                .url(url);
+
+        Request request = requestBuilder.build();
+        return chain.proceed(request);
+    }
+});
+```
