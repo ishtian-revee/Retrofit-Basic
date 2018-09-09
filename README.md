@@ -571,3 +571,105 @@ private boolean writeResponseBodyToDisk(ResponseBody body) {
 
 ***NOTE: If you’re downloading a large file, Retrofit would try to move the entire file into memory. In order to avoid that, we've to add
 a special annotation to the request declaration which is @Streaming***
+
+## 15. Simple Error Handling
+
+The best way to handle simple errors can be done by this in our call function:
+
+```
+call.enqueue(new Callback<User2>() {
+            @Override
+            public void onResponse(Call<User2> call, Response<User2> response) {
+                // this means at least we got the response
+                if (response.isSuccessful()) {
+                    showMessage("server returned user: " + response.body());
+                }else{      // server overloaded type errors, incorrect input errors
+                    // we can handle it like this in simple way
+//                    switch (response.code()) {
+//                        case 404:
+//                            showMessage("server returned error: user not found!");
+//                            break;
+//                        case 500:
+//                            showMessage("server returned error: server is broken!");
+//                            break;
+//                        default:
+//                            showMessage("server returned error: unknown error!");
+//                    }
+
+                    // we can also display error body
+//                    try {
+//                        showMessage("server returned error: " + response.errorBody().string());
+//                    } catch (IOException e) {
+//                        showMessage("Unknown error!");
+//                        e.printStackTrace();
+//                    }
+
+                    // the best way to simple error handling
+                    ApiError apiError = ErrorUtils.parseError(response);
+                    showMessage(apiError.getMessage());
+                }
+            }
+```
+
+---
+
+The java object for the error can be represented by the following class:
+
+```
+public class ApiError {
+    // fields
+    private int statusCode;
+    private String endPoint;
+    private String message = "Unknown error.";
+
+    public int getStatusCode(){ return this.statusCode; }
+    public String getEndPoint(){ return this.endPoint; }
+    public String getMessage(){ return this.message; }
+}
+```
+
+---
+
+### Simple Error Handler
+
+We will make use of the following class only having one `static` method which returns an `APIError` object. The `parseError` method expects
+the response as parameter. Further, we need to make our Retrofit instance available to apply the appropriate response converter for the
+received **JSON** error response.
+
+```
+public class ErrorUtils {
+    public static ApiError parseError(Response<?> response){
+        Converter<ResponseBody, ApiError> converter =
+                GetUserIdActivity.retrofit.responseBodyConverter(ApiError.class, new Annotation[0]);
+
+        ApiError error;
+        try {
+            error = converter.convert(response.errorBody());
+        }catch (IOException e){
+            return new ApiError();
+        }
+        return error;
+    }
+}
+```
+
+## 16. Send Data Form-Urlencoded
+
+Performing form-urlencoded requests using Retrofit is sort of straight forward. It’s just another Retrofit annotation, which will adjust the
+proper mime type of your request automatically to `application/x-www-form-urlencoded`. The following interface definitions for Retrofit
+will show us how to annotate our service interface for form-encoded requests.
+
+```
+public interface TaskService {  
+    @FormUrlEncoded
+    @POST("tasks")
+    Call<Task> createTask(@Field("title") String title);
+
+    // @Field also supports lists/arrays
+
+    // to send dynamic large number of data use map
+    @FormUrlEncoded
+    @POST("tasks")
+    Call<Task> createTask(@FieldMap Map<String, Object> map);
+}
+```
