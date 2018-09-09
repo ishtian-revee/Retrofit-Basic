@@ -451,3 +451,123 @@ Using Retrofit 2 and an OkHttp interceptor, you can add multiple request headers
 **NOTE:**
 * `.header(key, val)`: will override preexisting headers identified by key
 * `.addHeader(key, val)`: will add the header and don’t override preexisting ones
+
+## 13. Dynamic URLs
+
+Actually, it only requires us to add a single String parameter annotated with `@Url` in your endpoint definition.
+
+```
+public interface UserService {  
+    @GET
+    public Call<ResponseBody> profilePicture(@Url String url);
+}
+```
+
+---
+
+And the client code for using dynamic url can be:
+
+```
+// get a dynamic URL from the API
+String profilePhoto = "https://s3.amazon.com/profile-picture/path";
+
+UserService service = retrofit.create(UserService.class);  
+service.profilePicture(profilePhoto);
+```
+
+## 14. Downloading Files from Server
+
+The interface can be look like this:
+
+```
+public interface FileDownloadClient {
+
+    @GET("images/futurestudio-university-logo.png")
+    Call<ResponseBody> downloadFile();
+}
+```
+
+---
+
+As we are downloading files we need to make sure we have every permissions that required in `onColplete()` method:
+
+```
+if(ContextCompat.checkSelfPermission(DownloadActivity.this,
+    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+
+    ActivityCompat.requestPermissions(DownloadActivity.this, new String[]{
+          Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST);
+}
+```
+
+---
+
+### How to call request
+
+```
+FileDownloadService downloadService = ServiceGenerator.create(FileDownloadService.class);
+Call<ResponseBody> call = downloadService.downloadFileWithDynamicUrlSync(fileUrl);
+
+call.enqueue(new Callback<ResponseBody>() {  
+    @Override
+    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+        if (response.isSuccess()) {
+            Log.d(TAG, "server contacted and has file");
+            boolean writtenToDisk = writeResponseBodyToDisk(response.body());
+            Log.d(TAG, "file download was a success? " + writtenToDisk);
+        } else {
+            Log.d(TAG, "server contact failed");
+        }
+    }
+
+    @Override
+    public void onFailure(Call<ResponseBody> call, Throwable t) {
+        Log.e(TAG, "error");
+    }
+});
+```
+
+---
+
+### How to save the file
+
+```
+private boolean writeResponseBodyToDisk(ResponseBody body) {  
+    try {
+        // todo change the file location/name according to your needs
+        File futureStudioIconFile = new File(getExternalFilesDir(null) + File.separator + "Future Studio Icon.png");
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
+        try {
+            byte[] fileReader = new byte[4096];
+            long fileSize = body.contentLength();
+            long fileSizeDownloaded = 0;
+
+            inputStream = body.byteStream();
+            outputStream = new FileOutputStream(futureStudioIconFile);
+
+            while (true) {
+                int read = inputStream.read(fileReader);
+
+                if (read == -1) { break; }
+
+                outputStream.write(fileReader, 0, read);
+                fileSizeDownloaded += read;
+                Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
+            }
+            outputStream.flush();
+            return true;
+        } catch (IOException e) {
+            return false;
+        } finally {
+            if (inputStream != null) { inputStream.close(); }
+
+            if (outputStream != null) { outputStream.close(); }
+        }
+    } catch (IOException e) { return false; }
+}
+```
+
+***NOTE: If you’re downloading a large file, Retrofit would try to move the entire file into memory. In order to avoid that, we've to add
+a special annotation to the request declaration which is @Streaming***
