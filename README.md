@@ -747,3 +747,135 @@ httpClient.addInterceptor(new Interceptor() {
     }
 });
 ```
+
+## 19. OAuth Authentication
+
+### OAuth Basics
+
+OAuth is a token based authorization method which uses an access token for interaction between user and API. OAuth requires several steps
+and requests against the API to get your access token.
+
+* Register an app for the API you want to develop. Use the developer sites of the public API you're going to develop for.
+* Save client id and client secret in your app.
+* Request access to user data from your app.
+* Use the authorization code to get the access token.
+* Use the access token to interact with the API.
+
+For OAuth authentication the interface will look like this:
+
+```
+public interface GitHubClient {
+    // for oAuth authentication
+    @Headers("Accept: application/json")
+    @POST("login/oauth/access_token")
+    @FormUrlEncoded
+    Call<AccessToken> getAccessToken(
+            @Field("client_id") String clientId,
+            @Field("client_secret") String clientSecret,
+            @Field("code") String code
+    );
+}
+```
+
+---
+
+As we can see, we need a `AccessToken` class.
+
+```
+public class AccessToken {
+    @SerializedName("access_token")
+    private String accessToken;
+    @SerializedName("token_type")
+    private String tokenType;
+
+    public String getAccessToken(){ return accessToken; }
+    public String getTokenType(){ return tokenType; }
+}
+```
+
+---
+
+The activity class will look like this:
+
+```
+public class LoginActivity extends Activity {
+
+  // oAuth credentials
+  // it should either define client id and secret as constants or in string resources
+  private static final String API_BASE_URL = "https://example.com/oauthloginpage";
+  private static final String API_OAUTH_CLIENTID = "replace-me";
+  private static final String API_OAUTH_CLIENTSECRET = "replace-me";
+  private static final String API_OAUTH_REDIRECT = "nl.jpelgrm.retrofit2oauthrefresh://oauth";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        // for oAuth authentication
+        Intent intent = new Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(API_BASE_URL + "/login" + "?client_id=" + API_OAUTH_CLIENTID + "&redirect_uri=" + API_OAUTH_REDIRECT));
+        startActivity(intent);
+    }
+}
+```
+
+---
+
+### Define Activity and Intent Filter in AndroidManifest.Xml
+
+An intent in Android is a messaging object used to request action or information (communication) from another app or component.
+The intent filter is used to catch a message from an intent, identified by intent's action, category and data.
+
+```
+<activity android:name=".ui.activities.RepositoryListActivity">
+     <!--for oAuth authentication-->
+     <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data
+            android:host="redirect uri"
+            android:scheme="callback" />
+     </intent-filter>
+</activity>
+```
+
+---
+
+### Catch the Authorization Code
+
+```
+// for oAuth authentication
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Uri uri = getIntent().getData();
+
+        if(uri != null && uri.toString().startsWith(API_OAUTH_REDIRECT)){
+            String code = uri.getQueryParameter("code");
+
+            // initializing builder, declaring base url add adding converter factory
+            builder = new Retrofit.Builder()
+                    .baseUrl("https://github.com/")
+                    .addConverterFactory(GsonConverterFactory.create());
+            retrofit = builder.build();
+
+            client = retrofit.create(GitHubClient.class);
+            accessTokenCall = client.getAccessToken(API_OAUTH_CLIENTID, API_OAUTH_CLIENTSECRET, code);
+
+            accessTokenCall.enqueue(new Callback<AccessToken>() {
+                @Override
+                public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
+                    showMessage("success!");
+                }
+
+                @Override
+                public void onFailure(Call<AccessToken> call, Throwable t) {
+                    showMessage("error!");
+                }
+            });
+        }
+    }
+```
