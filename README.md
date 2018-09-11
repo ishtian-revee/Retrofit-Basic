@@ -955,3 +955,67 @@ map.put("sort", "asc");
 map.put("page", 1);
 Call<ResponseBody> dynamicQueryCall = client.searchForUsers(map);
 ```
+
+## 22. Cancel Request
+
+To cancel request we need to call `call.cancel();`
+
+## 23. Customizing Gson Converter
+
+```
+// customizing gson
+Gson gson = new GsonBuilder().serializeNulls().setDateFormat(DateFormat.LONG).create();
+builder = new Retrofit.Builder()
+        .baseUrl("https://api.github.com/")
+        .addConverterFactory(GsonConverterFactory.create(gson));
+retrofit = builder.build();
+```
+
+## 23. Creating a Sustainable Android Client
+
+Till now we have to configure and prepare our requests, responses, authentication, logging and error handling. Unfortunately, we have seen too
+many developers just copy-and-pasting these parts instead of separating into one clean class. The `ServiceGenerator` will give you our solution.
+
+```
+public class ServiceGenerator {
+
+    private static final String BASE_URL = "https://api.github.com/";
+
+    private static Retrofit.Builder builder = new Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create());
+
+    private static Retrofit retrofit = builder.build();
+
+    private static HttpLoggingInterceptor loggingInterceptor = new
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
+
+    private static OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+
+    // using like for making it dynamic
+    public static <S> S createService(Class<S> serviceClass){
+        if(!httpClientBuilder.interceptors().contains(loggingInterceptor)){
+            httpClientBuilder.addInterceptor(loggingInterceptor);
+            builder = builder.client(httpClientBuilder.build());
+            retrofit = builder.build();
+        }
+        return retrofit.create(serviceClass);
+    }
+}
+```
+
+---
+
+### Why Is Everything Declared Static Within the ServiceGenerator?
+
+You might wonder why we use static fields and methods within the `ServiceGenerator` class. Actually, it has one simple reason: we want to use
+the same objects (`OkHttpClient`, `Retrofit`, …) throughout the app to just open one socket connection that handles all the request and responses
+including caching and many more. It’s common practice to just use one `OkHttpClient` instance to reuse open socket connections. That means, we
+either need to inject the `OkHttpClient` to this class via dependency injection or use a static field. As you can see, we chose to use the static
+field. And because we use the `OkHttpClient` throughout this class, we need to make all fields and methods static.
+
+### Using the ServiceGenerator
+
+```
+GitHubClient client = ServiceGenerator.createService(GitHubClient.class);  
+```
