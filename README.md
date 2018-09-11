@@ -879,3 +879,79 @@ The intent filter is used to catch a message from an intent, identified by inten
         }
     }
 ```
+
+## 20. Optional & Multiple Query Parameters
+
+* Query parameters with `@Query`
+* Optional parameters by passing `null`
+* Multiple query parameters with `List<>`
+
+```
+    // for multiple query parameters
+    // multiple query parameters with @Query
+    @GET("user")
+    Call<ResponseBody> searchForUsers(
+            @Query("id") int id,
+            @Query("sort") String order,
+            @Query("page") int page
+    );
+
+    // optional
+    // Integer, String these are nullable types
+    // multiple query parameters by passing null
+    @GET("user")
+    Call<ResponseBody> searchForUsers(
+            @Query("id") Integer id,
+            @Query("sort") String order,
+            @Query("page") Integer page
+    );
+
+    // for searching multiple attributes at the same time
+    // // multiple query parameters with List<>
+    @GET("user")
+    Call<ResponseBody> searchForUsers(
+            @Query("id") List<Integer> id,
+            @Query("sort") String order,
+            @Query("page") Integer page
+    );
+```
+
+---
+
+The method calls will be:
+
+```
+// for multiple query parts
+multipleQueryCall = client.searchForUsers(11, "asc", 1);
+
+// for optional parameters
+multipleQueryCall = client.searchForUsers(11, null, null);
+
+// for multiple ids
+multipleQueryCall = client.searchForUsers(Arrays.asList(11, 12, 13), null, 1);
+```
+
+## 21. Dynamic Query Parameters
+
+Using map:
+
+```
+// dynamic query parameter by using map
+@GET("user")
+Call<ResponseBody> searchForUsers(
+      @QueryMap Map<String, Object> map
+);
+```
+
+---
+
+And the method call can be:
+
+```
+// creating a map fot dynamic query parameter
+Map<String, Object> map = new HashMap<>();
+map.put("id", 11);
+map.put("sort", "asc");
+map.put("page", 1);
+Call<ResponseBody> dynamicQueryCall = client.searchForUsers(map);
+```
