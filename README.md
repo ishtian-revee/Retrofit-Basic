@@ -23,7 +23,7 @@ The `@GET` annotation declares that this request uses the **HTTP GET method**. T
 Retrofit’s path parameter replacement functionality. In the defined method the `{user}` path will be replaced with the given
 variable values when calling the `reposForUser` method.
 
-```
+```java
 public interface GitHubClient {  
     @GET("/users/{user}/repos")   // the path contains the endpoint of the api
     Call<List<GitHubRepo>> reposForUser(
@@ -36,7 +36,7 @@ public interface GitHubClient {
 
 There is a defined class `GitHubRepo`. This class comprises required class properties to map the response data.
 
-```
+```java
 public class GitHubRepo {
     // fields
     private String name;
@@ -51,7 +51,7 @@ public class GitHubRepo {
 After describing the API interface and the object model, it’s time to prepare an actual request. Once we have created an adapter,
 we are able to create a **client**. We will use the **client** to execute the actual requests.
 
-```
+```java
 private static final String API_BASE_URL = "https://api.github.com/";
 
 private static Retrofit.Builder builder = new Retrofit.Builder()
@@ -65,7 +65,7 @@ private static Retrofit retrofit = builder.build();
 ---
 
 After doing a ton of prep work, it’s time to reap the benefits and finally make our request.
-```
+```java
 // create a very simple REST adapter or the client
 GitHubClient client =  retrofit.create(GitHubClient.class);
 
@@ -94,7 +94,7 @@ call.enqueue(new Callback<List<GitHubRepo>>() {
 Retrofit offers the ability to pass objects within the **request body**. Objects can be specified for use as HTTP request
 body by using the `@Body` annotation.
 
-```
+```java
 public interface UserClient {  
     @POST("/users")
     Call<Task> createUser(@Body User user);   // retrofit will create a request body to pass user object
@@ -104,7 +104,7 @@ public interface UserClient {
 ---
 
 And the user class could be look like this:
-```
+```java
 public class User {
     // fields
     private int id;
@@ -126,7 +126,7 @@ public class User {
 Instantiating a new `User` object fills its properties with values for id and username. Further, when passing the object to the
 service class, the object fields and values will be converted to **JSON**
 
-```
+```java
 User user = new Task(1, "ishtian revee");  
 Call<Task> call = taskService.createTask(task);
 call.enqueue(new Callback<List<GitHubRepo>>() {  
@@ -149,7 +149,7 @@ While developing your app and for debugging purposes it is nice to have a log fe
 information. Since logging is not integrated by default anymore in Retrofit 2, we need to add a **logging interceptor** for **OkHttp**.
 Luckily **OkHttp** already ships with this interceptor and we only need to activate it for our `OkHttpClient`.
 
-```
+```java
 // create OkHttp client
 OkHttpClient.Builder httpClient = new OkHttpClient.Builder();  
 
@@ -186,7 +186,7 @@ for your request and response.
 Using Retrofit 2, we need to use either OkHttp’s `RequestBody` or `MultipartBody.Part` classes and encapsulate our file into a request body.
 Let’s have a look at the interface definition for file uploads.
 
-```
+```java
 public interface FileUploadService {  
     @Multipart
     @POST("upload")
@@ -206,7 +206,7 @@ Here,
 
 ### Android Client Code
 
-```
+```java
 private void uploadFile(Uri fileUri) {  
     // create upload service client
     FileUploadService service = ServiceGenerator.createService(FileUploadService.class);
@@ -246,7 +246,7 @@ private void uploadFile(Uri fileUri) {
 `@PartMap` is an additional annotation for a request parameter, which allows us to specify how many and which parts we send during runtime.
 This can very helpful if your form is very long, but only a few of those input field values are actually send.
 
-```
+```java
 public interface FileUploadService {  
     @Multipart
     @POST("upload")
@@ -260,7 +260,7 @@ public interface FileUploadService {
 
 Finally, let's use this method and view the entire code from creating the Retrofit service, to filling the request with data and enqueuing the request:
 
-```
+```java
 Uri fileUri = ... // from a file chooser or a camera intent
 
 // create upload service client
@@ -294,7 +294,7 @@ There are two ways to upload multiple files to server:
 
 We can use `List<>` for multiple files. Our interface can be look like this:
 
-```
+```java
 public interface FileUploadService {  
     // new code for multiple files
     @Multipart
@@ -309,7 +309,7 @@ public interface FileUploadService {
 
 And now our method can be this:
 
-```
+```java
 ...
 
 List<MultipartBody.Part> parts = new ArrayList<>();
@@ -333,7 +333,7 @@ Retrofit provides two options to define HTTP request header fields:
 
 ### Static Headers
 
-```
+```java
 public interface UserService {  
     @Headers("Cache-Control: max-age=640000")
     @GET("/tasks")
@@ -341,7 +341,7 @@ public interface UserService {
 }
 ```
 
-```
+```java
 public interface UserService {  
     @Headers({
         "Accept: application/vnd.yourapi.v1.full+json",
@@ -356,7 +356,7 @@ public interface UserService {
 
 ### Dynamic Headers
 
-```
+```java
 public interface UserService {  
     @GET("/tasks")
     Call<List<Task>> getTasks(@Header("Content-Range") String contentRange);
@@ -376,7 +376,7 @@ public interface UserService {
 
  The code given below could be the class for background thread for synchronous network request:
 
- ```
+ ```java
  public class BackgroundService extends IntentService {
 
     public BackgroundService() {
@@ -414,7 +414,7 @@ public interface UserService {
 
 And in the UI thread we can call like this:
 
-```
+```java
 Intent intent = new Intent(PostActivity.this, BackgroundService.class);
 startActivity(intent);
 ```
@@ -425,7 +425,7 @@ Adding HTTP request headers is a good practice to add information for API reques
 If we need the header field including its value on almost every request, we can use an interceptor to add this piece of information. This way, we don’t
 need to add the `@Header` annotation to every endpoint declaration.
 
-```
+```java
 OkHttpClient.Builder httpClient = new OkHttpClient.Builder();  
 httpClient.addInterceptor(new Interceptor() {  
     @Override
@@ -456,7 +456,7 @@ Using Retrofit 2 and an OkHttp interceptor, you can add multiple request headers
 
 Actually, it only requires us to add a single String parameter annotated with `@Url` in your endpoint definition.
 
-```
+```java
 public interface UserService {  
     @GET
     public Call<ResponseBody> profilePicture(@Url String url);
@@ -467,7 +467,7 @@ public interface UserService {
 
 And the client code for using dynamic url can be:
 
-```
+```java
 // get a dynamic URL from the API
 String profilePhoto = "https://s3.amazon.com/profile-picture/path";
 
@@ -479,7 +479,7 @@ service.profilePicture(profilePhoto);
 
 The interface can be look like this:
 
-```
+```java
 public interface FileDownloadClient {
 
     @GET("images/futurestudio-university-logo.png")
@@ -491,7 +491,7 @@ public interface FileDownloadClient {
 
 As we are downloading files we need to make sure we have every permissions that required in `onColplete()` method:
 
-```
+```java
 if(ContextCompat.checkSelfPermission(DownloadActivity.this,
     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
 
@@ -504,7 +504,7 @@ if(ContextCompat.checkSelfPermission(DownloadActivity.this,
 
 ### How to call request
 
-```
+```java
 FileDownloadService downloadService = ServiceGenerator.create(FileDownloadService.class);
 Call<ResponseBody> call = downloadService.downloadFileWithDynamicUrlSync(fileUrl);
 
@@ -531,7 +531,7 @@ call.enqueue(new Callback<ResponseBody>() {
 
 ### How to save the file
 
-```
+```java
 private boolean writeResponseBodyToDisk(ResponseBody body) {  
     try {
         // todo change the file location/name according to your needs
@@ -578,13 +578,13 @@ The best way to handle simple errors can be done by this in our call function:
 
 ```
 call.enqueue(new Callback<User2>() {
-            @Override
-            public void onResponse(Call<User2> call, Response<User2> response) {
-                // this means at least we got the response
-                if (response.isSuccessful()) {
-                    showMessage("server returned user: " + response.body());
-                }else{      // server overloaded type errors, incorrect input errors
-                    // we can handle it like this in simple way
+        @Override
+        public void onResponse(Call<User2> call, Response<User2> response) {
+            // this means at least we got the response
+            if (response.isSuccessful()) {
+                showMessage("server returned user: " + response.body());
+            }else{      // server overloaded type errors, incorrect input errors
+                // we can handle it like this in simple way
 //                    switch (response.code()) {
 //                        case 404:
 //                            showMessage("server returned error: user not found!");
@@ -596,7 +596,7 @@ call.enqueue(new Callback<User2>() {
 //                            showMessage("server returned error: unknown error!");
 //                    }
 
-                    // we can also display error body
+                // we can also display error body
 //                    try {
 //                        showMessage("server returned error: " + response.errorBody().string());
 //                    } catch (IOException e) {
@@ -604,18 +604,18 @@ call.enqueue(new Callback<User2>() {
 //                        e.printStackTrace();
 //                    }
 
-                    // the best way to simple error handling
-                    ApiError apiError = ErrorUtils.parseError(response);
-                    showMessage(apiError.getMessage());
-                }
+                // the best way to simple error handling
+                ApiError apiError = ErrorUtils.parseError(response);
+                showMessage(apiError.getMessage());
             }
+        }
 ```
 
 ---
 
 The java object for the error can be represented by the following class:
 
-```
+```java
 public class ApiError {
     // fields
     private int statusCode;
@@ -636,7 +636,7 @@ We will make use of the following class only having one `static` method which re
 the response as parameter. Further, we need to make our Retrofit instance available to apply the appropriate response converter for the
 received **JSON** error response.
 
-```
+```java
 public class ErrorUtils {
     public static ApiError parseError(Response<?> response){
         Converter<ResponseBody, ApiError> converter =
@@ -659,7 +659,7 @@ Performing form-urlencoded requests using Retrofit is sort of straight forward. 
 proper mime type of your request automatically to `application/x-www-form-urlencoded`. The following interface definitions for Retrofit
 will show us how to annotate our service interface for form-encoded requests.
 
-```
+```java
 public interface TaskService {  
     @FormUrlEncoded
     @POST("tasks")
@@ -684,7 +684,7 @@ put within the request body. Conversion applies to both directions: *requests* a
 After adding the dependency we need to add the scalars converter to our Retrofit instance. Please be aware that the order we are adding
 response converters matters! As a rule of thumb, add Gson as the last converter to our Retrofit instance
 
-```
+```java
 Retrofit retrofit = new Retrofit.Builder()  
         .addConverterFactory(ScalarsConverterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
@@ -698,7 +698,7 @@ Retrofit retrofit = new Retrofit.Builder()
 
 The interface will look like this:
 
-```
+```java
 public interface ScalarService {  
     @POST("path")
     Call<ResponseBody> getStringRequestBody(@Body RequestBody body);
@@ -707,7 +707,7 @@ public interface ScalarService {
 
 The `ResponseBody` class allows us to receive any response data. The following code snippet shows the usage of both used classes in more detail:
 
-```
+```java
 String text = "plain text request body";  
 RequestBody body = RequestBody.create(MediaType.parse("text/plain"), text);
 
@@ -725,7 +725,7 @@ instead add the query parameter to every request method.
 You can do that by adding a new request interceptor to the `OkHttpClient`. Intercept the actual request and get the `HttpUrl`. The http url is
 required to add query parameters since it will change the previously generated request url by appending the query parameter name and its value.
 
-```
+```java
 OkHttpClient.Builder httpClient =  
     new OkHttpClient.Builder();
 httpClient.addInterceptor(new Interceptor() {  
@@ -763,7 +763,7 @@ and requests against the API to get your access token.
 
 For OAuth authentication the interface will look like this:
 
-```
+```java
 public interface GitHubClient {
     // for oAuth authentication
     @Headers("Accept: application/json")
@@ -781,7 +781,7 @@ public interface GitHubClient {
 
 As we can see, we need a `AccessToken` class.
 
-```
+```java
 public class AccessToken {
     @SerializedName("access_token")
     private String accessToken;
@@ -797,7 +797,7 @@ public class AccessToken {
 
 The activity class will look like this:
 
-```
+```java
 public class LoginActivity extends Activity {
 
   // oAuth credentials
@@ -828,7 +828,7 @@ public class LoginActivity extends Activity {
 An intent in Android is a messaging object used to request action or information (communication) from another app or component.
 The intent filter is used to catch a message from an intent, identified by intent's action, category and data.
 
-```
+```java
 <activity android:name=".ui.activities.RepositoryListActivity">
      <!--for oAuth authentication-->
      <intent-filter>
@@ -846,7 +846,7 @@ The intent filter is used to catch a message from an intent, identified by inten
 
 ### Catch the Authorization Code
 
-```
+```java
 // for oAuth authentication
     @Override
     protected void onResume() {
@@ -886,7 +886,7 @@ The intent filter is used to catch a message from an intent, identified by inten
 * Optional parameters by passing `null`
 * Multiple query parameters with `List<>`
 
-```
+```java
     // for multiple query parameters
     // multiple query parameters with @Query
     @GET("user")
@@ -920,7 +920,7 @@ The intent filter is used to catch a message from an intent, identified by inten
 
 The method calls will be:
 
-```
+```java
 // for multiple query parts
 multipleQueryCall = client.searchForUsers(11, "asc", 1);
 
@@ -935,7 +935,7 @@ multipleQueryCall = client.searchForUsers(Arrays.asList(11, 12, 13), null, 1);
 
 Using map:
 
-```
+```java
 // dynamic query parameter by using map
 @GET("user")
 Call<ResponseBody> searchForUsers(
@@ -947,7 +947,7 @@ Call<ResponseBody> searchForUsers(
 
 And the method call can be:
 
-```
+```java
 // creating a map fot dynamic query parameter
 Map<String, Object> map = new HashMap<>();
 map.put("id", 11);
@@ -962,7 +962,7 @@ To cancel request we need to call `call.cancel();`
 
 ## 23. Customizing Gson Converter
 
-```
+```java
 // customizing gson
 Gson gson = new GsonBuilder().serializeNulls().setDateFormat(DateFormat.LONG).create();
 builder = new Retrofit.Builder()
@@ -976,7 +976,7 @@ retrofit = builder.build();
 Till now we have to configure and prepare our requests, responses, authentication, logging and error handling. Unfortunately, we have seen too
 many developers just copy-and-pasting these parts instead of separating into one clean class. The `ServiceGenerator` will give you our solution.
 
-```
+```java
 public class ServiceGenerator {
 
     private static final String BASE_URL = "https://api.github.com/";
@@ -1016,6 +1016,6 @@ field. And because we use the `OkHttpClient` throughout this class, we need to m
 
 ### Using the ServiceGenerator
 
-```
+```java
 GitHubClient client = ServiceGenerator.createService(GitHubClient.class);  
 ```
