@@ -97,7 +97,7 @@ body by using the `@Body` annotation.
 ```java
 public interface UserClient {  
     @POST("/users")
-    Call<Task> createUser(@Body User user);   // retrofit will create a request body to pass user object
+    Call<User> createUser(@Body User user);   // retrofit will create a request body to pass user object
 }
 ```
 
@@ -127,8 +127,8 @@ Instantiating a new `User` object fills its properties with values for id and us
 service class, the object fields and values will be converted to **JSON**
 
 ```java
-User user = new Task(1, "ishtian revee");  
-Call<Task> call = taskService.createTask(task);
+User user = new User(1, "ishtian revee");  
+Call<User> call = taskService.createUser(user);
 call.enqueue(new Callback<List<GitHubRepo>>() {  
     @Override
     public void onResponse(Call<List<GitHubRepo>> call, Response<List<GitHubRepo>> response) {
