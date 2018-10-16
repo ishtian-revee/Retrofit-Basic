@@ -971,7 +971,7 @@ builder = new Retrofit.Builder()
 retrofit = builder.build();
 ```
 
-## 23. Creating a Sustainable Android Client
+## 24. Creating a Sustainable Android Client
 
 Till now we have to configure and prepare our requests, responses, authentication, logging and error handling. Unfortunately, we have seen too
 many developers just copy-and-pasting these parts instead of separating into one clean class. The `ServiceGenerator` will give you our solution.
